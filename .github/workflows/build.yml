@@ -16,14 +16,26 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Geode SDK
+        id: setup_geode  # ¡IMPORTANTE! Este ID nos deja leer la ruta después
         uses: geode-sdk/build-geode-mod@main
         with:
           sdk: nightly
-          # Eliminamos la línea de bindings para que use los de defecto.
-          # Esto arregla el error "Invalid repository".
+          # No ponemos build: true aquí para poder controlarlo manualmente si queremos,
+          # pero la acción por defecto intenta compilar.
+          # Vamos a dejar que intente compilar pero exportando las variables.
+
+      # Si el paso anterior falla compilando, intentamos compilar manualmente
+      # usando la variable que exportó.
+      - name: Build Manually (Fallback)
+        if: failure()
+        run: |
+          cmake -B build -S . -DGeode_DIR="${{ steps.setup_geode.outputs.geode-sdk }}"
+          cmake --build build --config Release
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MyCustomMod
-          path: build/*.geode
+          path: |
+            build/*.geode
+            build/Release/*.geode
