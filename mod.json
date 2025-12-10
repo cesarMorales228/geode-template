@@ -1,0 +1,10 @@
+{
+  "geode": "3.0.0-beta.1",
+  "gd": "2.206",
+  "version": "v1.0.0",
+  "id": "tu_usuario.test_mod",
+  "name": "Test Mod",
+  "developer": "Tu Nombre",
+  "description": "Mod generado desde la Web",
+  "resources": { "files": [] }
+}
