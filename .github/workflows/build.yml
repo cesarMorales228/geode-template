@@ -10,10 +10,6 @@ jobs:
   build:
     name: Build Mod
     runs-on: windows-latest
-    
-    # IMPORTANTE: Configurar variables de entorno globales
-    env:
-      CMAKE_BUILD_PARALLEL_LEVEL: 2
 
     steps:
       - name: Checkout Code
@@ -21,18 +17,37 @@ jobs:
         with:
           submodules: recursive
 
-      # Usamos una configuración más robusta para CLI
-      - name: Setup Geode CLI
-        uses: geode-sdk/build-geode-mod@main
-        id: build
-        with:
-          sdk: nightly
-          build: true  # Volvemos a true, pero con un truco abajo
-          # Si falla aquí, es culpa del CMakeLists.txt
+      - name: Install Geode CLI
+        run: |
+          # Descargar Geode CLI
+          Invoke-WebRequest -Uri "https://github.com/geode-sdk/cli/releases/latest/download/geode-cli-win.zip" -OutFile "geode-cli.zip"
+          Expand-Archive -Path "geode-cli.zip" -DestinationPath "geode-cli"
+          
+          # Agregar al PATH
+          echo "$PWD/geode-cli" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Setup Geode SDK
+        run: |
+          # Instalar SDK Nightly
+          ./geode-cli/geode.exe sdk install nightly
+          
+          # ¡IMPORTANTE! Averiguar dónde se instaló
+          $sdkPath = "$env:LOCALAPPDATA/Geode/sdk"
+          echo "GEODE_SDK=$sdkPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          
+          # Instalar dependencias si las hubiera
+          ./geode-cli/geode.exe index update
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -S . -DGeode_DIR="$env:GEODE_SDK" -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: |
+          cmake --build build --config Release
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
-        if: success()
         with:
           name: MyCustomMod
-          path: ${{ steps.build.outputs.build-output }}
+          path: build/Release/*.geode
