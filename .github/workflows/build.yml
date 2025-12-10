@@ -10,34 +10,29 @@ jobs:
   build:
     name: Build Mod
     runs-on: windows-latest
+    
+    # IMPORTANTE: Configurar variables de entorno globales
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      # 1. Instalar Geode pero SIN compilar todavía
-      - name: Setup Geode SDK
-        id: setup_geode
+      # Usamos una configuración más robusta para CLI
+      - name: Setup Geode CLI
         uses: geode-sdk/build-geode-mod@main
+        id: build
         with:
           sdk: nightly
-          build: false   # ¡ESTO ES LA CLAVE! Evita que falle intentando adivinar
+          build: true  # Volvemos a true, pero con un truco abajo
+          # Si falla aquí, es culpa del CMakeLists.txt
 
-      # 2. Compilar Manualmente pasando la ruta EXPLÍCITA
-      - name: Build Manually
-        run: |
-          # Imprimir la ruta para debug (saldrá en el log)
-          echo "Geode Path: ${{ steps.setup_geode.outputs.geode-sdk }}"
-          
-          # Configurar CMake pasándole la ruta a la fuerza
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DGeode_DIR="${{ steps.setup_geode.outputs.geode-sdk }}"
-          
-          # Compilar
-          cmake --build build --config Release
-
-      # 3. Subir el archivo .geode
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
+        if: success()
         with:
           name: MyCustomMod
-          path: build/Release/*.geode
+          path: ${{ steps.build.outputs.build-output }}
