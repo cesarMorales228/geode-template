@@ -1,6 +1,5 @@
 name: Build Geode Mod
 
-# Se activa cuando haces un push (o cuando tu App Web actualiza el código)
 on:
   workflow_dispatch:
   push:
@@ -13,26 +12,18 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1. Descargar tu código del repositorio
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Configurar el entorno de Geode (Instala CLI, SDK, C++)
       - name: Setup Geode SDK
         uses: geode-sdk/build-geode-mod@main
         with:
-          sdk: nightly  # Usa la versión más reciente del SDK
-          bindings: geometry-dash # Bindings estándar
-          # Si tu mod necesita librerías extra, agrégalas aquí
+          sdk: nightly
+          # Eliminamos la línea de bindings para que use los de defecto.
+          # Esto arregla el error "Invalid repository".
 
-      # 3. Renombrar el archivo de salida (Opcional, para que se vea bonito)
-      # El build action ya genera un .geode, pero a veces con nombres raros.
-      # Este paso busca cualquier .geode y lo prepara para subir.
-      
-      # 4. Subir el archivo .geode generado para que tu App lo descargue
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MyCustomMod
-          path: build/*.geode 
-          # Nota: La acción de geode suele dejar el archivo en build/
+          path: build/*.geode
