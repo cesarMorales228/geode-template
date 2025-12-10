@@ -15,27 +15,29 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # 1. Instalar Geode pero SIN compilar todavía
       - name: Setup Geode SDK
-        id: setup_geode  # ¡IMPORTANTE! Este ID nos deja leer la ruta después
+        id: setup_geode
         uses: geode-sdk/build-geode-mod@main
         with:
           sdk: nightly
-          # No ponemos build: true aquí para poder controlarlo manualmente si queremos,
-          # pero la acción por defecto intenta compilar.
-          # Vamos a dejar que intente compilar pero exportando las variables.
+          build: false   # ¡ESTO ES LA CLAVE! Evita que falle intentando adivinar
 
-      # Si el paso anterior falla compilando, intentamos compilar manualmente
-      # usando la variable que exportó.
-      - name: Build Manually (Fallback)
-        if: failure()
+      # 2. Compilar Manualmente pasando la ruta EXPLÍCITA
+      - name: Build Manually
         run: |
-          cmake -B build -S . -DGeode_DIR="${{ steps.setup_geode.outputs.geode-sdk }}"
+          # Imprimir la ruta para debug (saldrá en el log)
+          echo "Geode Path: ${{ steps.setup_geode.outputs.geode-sdk }}"
+          
+          # Configurar CMake pasándole la ruta a la fuerza
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DGeode_DIR="${{ steps.setup_geode.outputs.geode-sdk }}"
+          
+          # Compilar
           cmake --build build --config Release
 
+      # 3. Subir el archivo .geode
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: MyCustomMod
-          path: |
-            build/*.geode
-            build/Release/*.geode
+          path: build/Release/*.geode
