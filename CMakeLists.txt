@@ -5,7 +5,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(MyCustomMod)
 
-# Geode ya debería ser encontrado porque le pasamos la ruta en el comando de build
+# --- TRUCO ---
+# Si Geode no se encuentra, intentamos usar la variable de entorno que la acción suele dejar.
+if(DEFINED ENV{GEODE_SDK})
+    list(APPEND CMAKE_MODULE_PATH "$ENV{GEODE_SDK}/share/cmake/Geode")
+endif()
+
 find_package(Geode REQUIRED)
 
 setup_geode_mod(MyCustomMod)
