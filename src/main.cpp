@@ -1,7 +1,3 @@
-#include <Geode/Geode.hpp>
+// main.cpp mínimo para que el build pase
 
-using namespace geode::prelude;
-
-$execute {
-    log::info("Hello from Web Builder!");
-}
+extern "C" __declspec(dllexport) void __dummy_geode_entry() {}
