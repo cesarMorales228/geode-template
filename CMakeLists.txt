@@ -10,7 +10,6 @@ add_library(GeodeForgeTestMod SHARED
 )
 
 target_include_directories(GeodeForgeTestMod PRIVATE
-    $ENV{GEODE_SDK}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/geode-sdk-clone/include
 )
 
