@@ -18,11 +18,12 @@ jobs:
           submodules: recursive
 
       - name: Setup & Build with Geode SDK
+      # acción oficial documentada
         uses: geode-sdk/build-geode-mod@main
         id: build
         with:
           sdk: nightly
-          build: true
+          # OJO: ya no uses "build: true", la acción compila sola
 
       - name: Upload Artifact
         if: success()
