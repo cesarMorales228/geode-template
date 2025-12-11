@@ -1,1 +1,5 @@
-include($ENV{GEODE_SDK}/cmake/Geode.cmake OPTIONAL)
+if(DEFINED ENV{GEODE_SDK})
+    include($ENV{GEODE_SDK}/cmake/Geode.cmake)
+else()
+    message(FATAL_ERROR "GEODE_SDK environment variable is not set")
+endif()
