@@ -9,13 +9,11 @@ add_library(GeodeForgeTestMod SHARED
     src/main.cpp
 )
 
-# Incluir headers del SDK que instala la action
+# Incluir los headers del SDK de Geode (en loader/include)
 if(DEFINED ENV{GEODE_SDK})
     target_include_directories(GeodeForgeTestMod PRIVATE
-        $ENV{GEODE_SDK}/include
+        $ENV{GEODE_SDK}/loader/include
     )
-else()
-    message(FATAL_ERROR "GEODE_SDK env var is not set")
 endif()
 
 target_compile_definitions(GeodeForgeTestMod PRIVATE
