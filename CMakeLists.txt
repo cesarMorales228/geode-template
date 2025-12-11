@@ -5,11 +5,15 @@ project(GeodeForgeTestMod)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Incluir nuestro wrapper, que a su vez incluye el del SDK en Actions
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Geode.cmake OPTIONAL)
-
-setup_geode_mod(GeodeForgeTestMod)
-
-add_geode_sources(GeodeForgeTestMod
+add_library(GeodeForgeTestMod SHARED
     src/main.cpp
 )
+
+target_include_directories(GeodeForgeTestMod PRIVATE
+    $ENV{GEODE_SDK}/include
+)
+
+target_compile_definitions(GeodeForgeTestMod PRIVATE
+    GEODE_MOD_ID="cesar.geodeforge.testmod"
+)
+
