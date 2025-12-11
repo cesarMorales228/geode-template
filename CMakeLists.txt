@@ -9,10 +9,11 @@ add_library(GeodeForgeTestMod SHARED
     src/main.cpp
 )
 
-# Incluir los headers del SDK de Geode (en loader/include)
+# Incluir todas las rutas necesarias del SDK
 if(DEFINED ENV{GEODE_SDK})
     target_include_directories(GeodeForgeTestMod PRIVATE
         $ENV{GEODE_SDK}/loader/include
+        $ENV{GEODE_SDK}/loader/include/Geode
     )
 endif()
 
