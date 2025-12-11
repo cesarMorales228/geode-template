@@ -1,33 +1,25 @@
 name: Build Geode Mod
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
-    name: Build Mod
     runs-on: windows-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
-      - name: Setup & Build with Geode SDK
-      # acción oficial documentada
+      - name: Build Geode Mod
         uses: geode-sdk/build-geode-mod@main
-        id: build
         with:
-          sdk: nightly
-          # OJO: ya no uses "build: true", la acción compila sola
+          target: Win64
 
-      - name: Upload Artifact
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: MyCustomMod
-          path: ${{ steps.build.outputs.build-output }}
+      - name: List Geode SDK headers
+        run: |
+          echo "GEODE_SDK = $Env:GEODE_SDK"
+          Get-ChildItem -Recurse "$Env:GEODE_SDK\include" | Select-Object FullName
