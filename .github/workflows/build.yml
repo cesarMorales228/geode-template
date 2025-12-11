@@ -1,1 +1,32 @@
+name: Build Geode Mod
 
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build Mod
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup & Build with Geode SDK
+        uses: geode-sdk/build-geode-mod@main
+        id: build
+        with:
+          sdk: nightly
+          build: true
+
+      - name: Upload Artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MyCustomMod
+          path: ${{ steps.build.outputs.build-output }}
