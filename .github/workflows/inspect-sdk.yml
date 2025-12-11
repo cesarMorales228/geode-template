@@ -1,0 +1,21 @@
+name: Inspect Geode SDK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  inspect:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Geode SDK via CLI
+        uses: geode-sdk/cli/.github/actions/setup@main
+
+      - name: Show GEODE_SDK and headers
+        shell: pwsh
+        run: |
+          Write-Host "GEODE_SDK = $Env:GEODE_SDK"
+          Get-ChildItem "$Env:GEODE_SDK\include" -Recurse | Select-Object FullName
