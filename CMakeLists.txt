@@ -5,16 +5,9 @@ project(MyCustomMod)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Geode SDK: la acción exporta GEODE_SDK apuntando a la raíz del SDK.
-# Dentro de eso suele estar GeodeConfig.cmake en:
-#   $GEODE_SDK/lib/cmake/Geode
-if(DEFINED ENV{GEODE_SDK})
-    list(APPEND CMAKE_PREFIX_PATH "$ENV{GEODE_SDK}")
-    list(APPEND CMAKE_MODULE_PATH "$ENV{GEODE_SDK}/lib/cmake/Geode")
-endif()
+# IMPORTANTE: no tocar GEODE_SDK ni find_package aquí
 
-find_package(Geode REQUIRED)
-
+# Esta macro la provee el template de Geode incluido en el repo
 setup_geode_mod(MyCustomMod)
 
 add_geode_sources(MyCustomMod
