@@ -5,11 +5,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(MyCustomMod)
 
-# Si la acción de Geode exporta GEODE_SDK, añadimos el módulo
+# 1) AÑADIR ESTO ARRIBA DE find_package
 if(DEFINED ENV{GEODE_SDK})
+    list(APPEND CMAKE_PREFIX_PATH "$ENV{GEODE_SDK}")
     list(APPEND CMAKE_MODULE_PATH "$ENV{GEODE_SDK}/share/cmake/Geode")
 endif()
 
+# 2) AHORA SÍ BUSCAR GEODE
 find_package(Geode REQUIRED)
 
 setup_geode_mod(MyCustomMod)
